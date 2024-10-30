@@ -1,6 +1,7 @@
 import GoogleProvider from 'next-auth/providers/google'
 import connectDB from '@/config/db'
 import User from '@/models/User'
+import ErrorPage from '@/app/error'
 
 export const authOptions = {
   providers: [
@@ -23,17 +24,22 @@ export const authOptions = {
       await connectDB()
       //2. Check if user exist.
       const userExist = await User.findOne({ email: profile.email })
-      //3. If not, create user.
+      //2a. Validation of Email User - Do not create one
       if (!userExist) {
-        // Shorten Username to 20 Characters
-        const username = profile.name.slice(0, 20)
-        // Create the user in our Database
-        await User.create({
-          email: profile.email,
-          username: profile.name,
-          image: profile.picture,
-        })
+        console.log('User NOT Authorized')
       }
+
+      //3. If not, create user.
+      // if (!userExist) {
+      //   // Shorten Username to 20 Characters
+      //   const username = profile.name.slice(0, 20)
+      //   // Create the user in our Database
+      //   await User.create({
+      //     email: profile.email,
+      //     username: profile.name,
+      //     image: profile.picture,
+      //   })
+      // }
       //4. Return true to allow sign in.
       return true
     },
